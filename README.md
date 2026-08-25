@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/fortinet_hunter_banner.png" alt="Fortinet Hunter 2026" width="800"/>
 
-  <h1>🧠 Fortinet Hunter 2026 v6.0</h1>
+  <h1>🗿 Fortinet Hunter 2026 v6.0 🗿</h1>
 
   <p><strong>Your personal, friendly, sentient Fortinet attack tool</strong><br>
   One step closer to Skynet.</p>
