@@ -99,50 +99,74 @@ legacy ``fortigate_hunter`` shim):
 | Companion | ``shodan-fortinet-hunter/`` — 12-family passive→verified discovery (Shodan/Censys/FOFA) | ``shodan-fortinet-hunter/`` |
 | Tests | 420+ tests, mock-server library, CLI smoke, GitHub Actions CI | ``tests/``, ``.github/workflows/ci.yml`` |
 
-**P4 (Phase Resources) extensions:** +3 CVE kits (70465/54121/56399) · cloud-native lateral
-(k8s/etcd/kubelet/Ray/Docker/IMDS) · weaponization backports (ROP/FortiJump certs/EMS
-cert-forgery/SAML) · evasion depth (BYOVD kernel, proc-inject, AI-gate) · JWT attack
-engine + cert-hunter multi-source · bore C2 third transport + masquerade persistence #17 ·
-FortiOS bash→Python backports · recon-data sync + methodology consolidation + 8
-supply-chain rules · IoT-botnet beacon robustness (``c2/beacon_robustness.py``,
+**P4 (Phase Resources) extensions:** +3 CVE kits (70465/54121/56399) 
+· cloud-native lateral
+(k8s/etcd/kubelet/Ray/Docker/IMDS) 
+· weaponization backports (ROP/FortiJump certs/EMS
+cert-forgery/SAML) 
+· evasion depth (BYOVD kernel, proc-inject, AI-gate) 
+· JWT attack
+engine + cert-hunter multi-source 
+· bore C2 third transport + masquerade persistence #17 
+· FortiOS bash→Python backports 
+· recon-data sync + methodology consolidation + 8
+supply-chain rules 
+· IoT-botnet beacon robustness (``c2/beacon_robustness.py``,
 ``docs/references/iot-botnet-patterns.md``).
 
 **ML-* (state-of-the-art ML):** real trainable models, pure-Python (stdlib-only, sklearn
-optional): ``ml/models.py`` (LogisticRegressionSGD with LogLoss+L2+early-stop,
-AdaBoost decision-stump ensemble, FeatureExtractor) · ``ml/cve_risk.py`` EPSS-inspired
-CVE exploitation-risk model trained on the 52-entry DB (``score --ml``) ·
-``ml/anomaly.py`` z-score scan-anomaly baseline · ``ml/payload_classifier.py``
-char-ngram payload classifier.  Legacy heuristic ML (EPSS/anomaly/generator/classifier)
+optional):
+· ``ml/models.py`` (LogisticRegressionSGD with LogLoss+L2+early-stop,
+AdaBoost decision-stump ensemble, FeatureExtractor) 
+· ``ml/cve_risk.py`` EPSS-inspired
+CVE exploitation-risk model trained on the 52-entry DB (``score --ml``) 
+· ``ml/anomaly.py`` z-score scan-anomaly baseline 
+· ``ml/payload_classifier.py`` char-ngram payload classifier.  Legacy heuristic ML (EPSS/anomaly/generator/classifier)
 stays aliased under ``fortinet_hunter.ml.*``.
 
 **P5-1 (Agentic AI Orchestrator):** the closed agent loop — plan → execute →
 critique → re-plan — drives the whole framework toward a goal
-(``agent/`` package): ``planner.py`` (RulePlanner deterministic goal decomposition
+(``agent/`` package):
+· ``planner.py`` (RulePlanner deterministic goal decomposition
 over the ML-risk-ranked exploit registry + chain factory; LLMPlanner pluggable
-protocol) · ``executor.py`` (registry dispatch for exploit/exfil/lateral/recon/chain,
-dry-run safe) · ``critic.py`` (continue/escalate/pivot/abort verdicts + ML
-scan-anomaly boost) · ``orchestrator.py`` (the loop, registered as ``agent_orchestrator``
-plugin, pivot-exclusion re-planning, budget enforcement).  CLI:
+protocol) 
+· ``executor.py`` (registry dispatch for exploit/exfil/lateral/recon/chain,
+dry-run safe) 
+· ``critic.py`` (continue/escalate/pivot/abort verdicts + ML
+scan-anomaly boost) 
+· ``orchestrator.py`` (the loop, registered as ``agent_orchestrator``
+plugin, pivot-exclusion re-planning, budget enforcement).
+
+CLI:
 ``python3 -m fortinet_hunter agent <target> --goal exfil --dry-run --budget 8``.
 
 **P5-2 (Dead-Drop C2):** two new C2 channels — ``c2/gist_channel.py`` (GitHub
 Gist dead-drop resolver + beacon + operator: T1102.001 pattern, AES-GCM frames
 base64-armored for gist text, injected HTTP = lab-gated) and ``c2/ngrok_channel.py``
 (tunnel beacon + loopback relay: ``tcp://``/``https://`` endpoint parsing,
-redirector-free public-tunnel pattern).  Both wired into the exfil transport
-chain (``_GistTransport``/``_NgrokTransport``) so fallback degrades
-Tor → DoH → bore → gist → ngrok.  Reference: ``docs/references/dead-drop-c2.md``.
+redirector-free public-tunnel pattern).
+
+Both wired into the exfil transport chain (``_GistTransport``/``_NgrokTransport``) so fallback degrades
+Tor → DoH → bore → gist → ngrok.
+
+Reference: ``docs/references/dead-drop-c2.md``.
 
 **P5-3 (EPSS V5 feature expansion):** ``ml/risk_signals.py`` adds four
-EPSS-V5-style signal sources over the 52-entry DB — CISA KEV membership
-(``KEVSource``, from DB markers or injected set), public exploit-code presence
-(``ExploitCodeSource``, from PoC flag or GitHub-scanner set), dark-web mention
-counts (``DarkWebSource``, live collector wired in P5-5), and chain
-reachability (``ChainReachability`` — is the CVE's exploit wired into a
-framework chain).  ``CVERiskModel`` now trains with the 4-feature signal
-vector (35 total), ``rank()`` attaches EPSS-style percentiles, and
-``calibrate()`` reports a binned reliability curve.  CLI ``score --ml`` shows
-PCT column.  All sources dry-run safe (offline defaults).
+EPSS-V5-style signal sources over the 52-entry:
+
+·  DB - CISA KEV membership (``KEVSource``, from DB markers or injected set)
+· public exploit-code presence (``ExploitCodeSource``, from PoC flag or GitHub-scanner set)
+· dark-web mention counts (``DarkWebSource``, live collector wired in P5-5)
+· chain reachability (``ChainReachability`` — is the CVE's exploit wired into a
+framework chain)
+· ``CVERiskModel`` now trains with the 4-feature signal
+vector (35 total)
+· ``rank()`` attaches EPSS-style percentiles
+· ``calibrate()`` reports a binned reliability curve
+
+CLI ``score --ml`` shows PCT column.
+
+All sources dry-run safe (offline defaults).
 
 **P5-4 (Attack-Path Graph):** BlueHound/PivotMap-style planning over the
 framework's own registry — ``core/attack_graph.py`` builds a directed
