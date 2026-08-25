@@ -99,18 +99,24 @@ legacy ``fortigate_hunter`` shim):
 | Companion | ``shodan-fortinet-hunter/`` — 12-family passive→verified discovery (Shodan/Censys/FOFA) | ``shodan-fortinet-hunter/`` |
 | Tests | 420+ tests, mock-server library, CLI smoke, GitHub Actions CI | ``tests/``, ``.github/workflows/ci.yml`` |
 
-**P4 (Phase Resources) extensions:** +3 CVE kits (70465/54121/56399) 
-· cloud-native lateral
-(k8s/etcd/kubelet/Ray/Docker/IMDS) 
+**P4 (Phase Resources) extensions:** +3 CVE kits (70465/54121/56399):
+
+· cloud-native lateral (k8s/etcd/kubelet/Ray/Docker/IMDS)
+
 · weaponization backports (ROP/FortiJump certs/EMS
-cert-forgery/SAML) 
-· evasion depth (BYOVD kernel, proc-inject, AI-gate) 
+cert-forgery/SAML)
+
+· evasion depth (BYOVD kernel, proc-inject, AI-gate)
+
 · JWT attack
-engine + cert-hunter multi-source 
-· bore C2 third transport + masquerade persistence #17 
-· FortiOS bash→Python backports 
-· recon-data sync + methodology consolidation + 8
-supply-chain rules 
+engine + cert-hunter multi-source
+
+· bore C2 third transport + masquerade persistence #17
+
+· FortiOS bash→Python backports
+
+· recon-data sync + methodology consolidation + 8 supply-chain rules
+
 · IoT-botnet beacon robustness (``c2/beacon_robustness.py``,
 ``docs/references/iot-botnet-patterns.md``).
 
